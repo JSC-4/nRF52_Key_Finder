@@ -50,3 +50,8 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+## SEGGER Embedded Studio and JLink ##
+application/pca10056/ses/Output/
+project/pca10056/ses/ble_app_key_finder_pca10056_s140_Release.jlink
+project/pca10056/ses/ble_app_key_finder_pca10056_s140_Debug.jlink
