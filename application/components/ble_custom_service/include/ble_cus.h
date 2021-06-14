@@ -49,10 +49,10 @@
 
 #define CUS_SERVICE_UUID            0x1000
 
-#define BUTTONS_STATES_CHAR_UUID    0x1001
+#define LED_STATE_CHAR_UUID         0x1001
 #define BUZZER_STATES_CHAR_UUID     0x1002
 #define VMOTOR_STATES_CHAR_UUID     0x1003
-
+#define BUTTONS_STATES_CHAR_UUID    0x1004
 
 // Forward declaration of the ble_cus_t type.
 typedef struct ble_cus_s ble_cus_t;
@@ -64,7 +64,11 @@ typedef struct ble_cus_s ble_cus_t;
  * @hideinitializer
  */
 #define BLE_CUS_DEF(_name)                                                                          \
-static ble_cus_t _name;
+static ble_cus_t _name;                                                                             \
+NRF_SDH_BLE_OBSERVER(_name ## _obs,                                                                 \
+                     BLE_HRS_BLE_OBSERVER_PRIO,                                                     \
+                     ble_cus_on_ble_evt, &_name)
+
 
 
 /**@brief Custom Service init structure. This contains all options and data needed for
@@ -96,3 +100,15 @@ struct ble_cus_s
  * @return      NRF_SUCCESS on successful initialization of service, otherwise an error code.
  */
 uint32_t ble_cus_init(ble_cus_t * p_cus, const ble_cus_init_t * p_cus_init);
+
+
+/**@brief Function for handling the Application's BLE Stack events.
+ *
+ * @details Handles all events from the BLE stack of interest to the Battery Service.
+ *
+ * @note 
+ *
+ * @param[in]   p_ble_evt  Event received from the BLE stack.
+ * @param[in]   p_context  Custom Service structure.
+ */
+void ble_cus_on_ble_evt( ble_evt_t const * p_ble_evt, void * p_context);
