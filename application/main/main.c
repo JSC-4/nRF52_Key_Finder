@@ -277,6 +277,34 @@ static void on_yys_evt(ble_yy_service_t     * p_yy_service,
 }
 */
 
+
+/**@brief Function for handling the Custom Service Service events.
+ *
+ * @details This function will be called for all Custom Service events which are passed to
+ *          the application.
+ *
+ * @param[in]   p_cus_service  Custom Service structure.
+ * @param[in]   p_evt          Event received from the Custom Service.
+ *
+ */
+static void on_cus_evt(ble_cus_t     * p_cus_service,
+                       ble_cus_evt_t * p_evt)
+{
+    switch(p_evt->evt_type)
+    {
+        case BLE_CUS_EVT_CONNECTED:
+            break;
+
+        case BLE_CUS_EVT_DISCONNECTED:
+              break;
+
+        default:
+              // No implementation needed.
+              break;
+    }
+}
+
+
 /**@brief Function for initializing services that will be used by the application.
  */
 static void services_init(void)
@@ -294,31 +322,14 @@ static void services_init(void)
     ble_cus_init_t  cus_init;
     memset(&cus_init, 0, sizeof(cus_init));
 
+    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cus_init.custom_value_char_attr_md.read_perm);
+    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cus_init.custom_value_char_attr_md.write_perm);
+
+    // Set the cus event handler
+    cus_init.evt_handler                = on_cus_evt;
+
     err_code = ble_cus_init(&m_cus, & cus_init);
     APP_ERROR_CHECK(err_code);
-
-    /* YOUR_JOB: Add code to initialize the services used by the application.
-       ble_xxs_init_t                     xxs_init;
-       ble_yys_init_t                     yys_init;
-
-       // Initialize XXX Service.
-       memset(&xxs_init, 0, sizeof(xxs_init));
-
-       xxs_init.evt_handler                = NULL;
-       xxs_init.is_xxx_notify_supported    = true;
-       xxs_init.ble_xx_initial_value.level = 100;
-
-       err_code = ble_bas_init(&m_xxs, &xxs_init);
-       APP_ERROR_CHECK(err_code);
-
-       // Initialize YYY Service.
-       memset(&yys_init, 0, sizeof(yys_init));
-       yys_init.evt_handler                  = on_yys_evt;
-       yys_init.ble_yy_initial_value.counter = 0;
-
-       err_code = ble_yy_service_init(&yys_init, &yy_init);
-       APP_ERROR_CHECK(err_code);
-     */
 }
 
 
