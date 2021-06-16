@@ -48,6 +48,7 @@
 "Output/Release/Obj/ble_app_key_finder_pca10056_s140/bsp_btn_ble.o"
 "Output/Release/Obj/ble_app_key_finder_pca10056_s140/main.o"
 "Output/Release/Obj/ble_app_key_finder_pca10056_s140/ble_cus.o"
+"Output/Release/Obj/ble_app_key_finder_pca10056_s140/ble_bas.o"
 "Output/Release/Obj/ble_app_key_finder_pca10056_s140/SEGGER_RTT.o"
 "Output/Release/Obj/ble_app_key_finder_pca10056_s140/SEGGER_RTT_Syscalls_SES.o"
 "Output/Release/Obj/ble_app_key_finder_pca10056_s140/SEGGER_RTT_printf.o"

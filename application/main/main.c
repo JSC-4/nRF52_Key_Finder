@@ -79,6 +79,7 @@
 #include "nrf_pwr_mgmt.h"
 
 #include "ble_cus.h"
+#include "ble_bas.h"
 
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
@@ -113,13 +114,18 @@
 
 #define DEAD_BEEF                       0xDEADBEEF                              /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
+#define BATTERY_LEVEL_MEAS_INTERVAL         APP_TIMER_TICKS(2000)
 
+BLE_BAS_DEF(m_bas);                                                 /**< Structure used to identify the battery service. */
 BLE_CUS_DEF(m_cus);
 NRF_BLE_GATT_DEF(m_gatt);                                                       /**< GATT module instance. */
 NRF_BLE_QWR_DEF(m_qwr);                                                         /**< Context for the Queued Write module.*/
 BLE_ADVERTISING_DEF(m_advertising);                                             /**< Advertising module instance. */
 
+APP_TIMER_DEF(m_battery_timer_id);                                  /**< Battery timer. */
+
 static uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID;                        /**< Handle of the current connection. */
+static volatile uint8_t battery_level = 0;                                      /**< Battery level. */
 
 /* YOUR_JOB: Declare all services structure your application is using
  *  BLE_XYZ_DEF(m_xyz);
@@ -173,6 +179,40 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
 }
 
 
+/**@brief Function for performing battery measurement and updating the Battery Level characteristic
+ *        in Battery Service.
+ */
+static void battery_level_update(void)
+{
+    ret_code_t err_code;
+
+    err_code = ble_bas_battery_level_update(&m_bas, battery_level, BLE_CONN_HANDLE_ALL);
+    if ((err_code != NRF_SUCCESS) &&
+        (err_code != NRF_ERROR_INVALID_STATE) &&
+        (err_code != NRF_ERROR_RESOURCES) &&
+        (err_code != NRF_ERROR_BUSY) &&
+        (err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)
+       )
+    {
+        APP_ERROR_HANDLER(err_code);
+    }
+}
+
+
+/**@brief Function for handling the Battery measurement timer timeout.
+ *
+ * @details This function will be called each time the battery level measurement timer expires.
+ *
+ * @param[in] p_context  Pointer used for passing some arbitrary information (context) from the
+ *                       app_start_timer() call to the timeout handler.
+ */
+static void battery_level_meas_timeout_handler(void * p_context)
+{
+    UNUSED_PARAMETER(p_context);
+    battery_level_update();
+}
+
+
 /**@brief Function for the Timer initialization.
  *
  * @details Initializes the timer module. This creates and starts application timers.
@@ -183,7 +223,13 @@ static void timers_init(void)
     ret_code_t err_code = app_timer_init();
     APP_ERROR_CHECK(err_code);
 
+
     // Create timers.
+    err_code = app_timer_create(&m_battery_timer_id,
+                                APP_TIMER_MODE_REPEATED,
+                                battery_level_meas_timeout_handler);
+    APP_ERROR_CHECK(err_code);
+
 
     /* YOUR_JOB: Create any timers to be used by the application.
                  Below is an example of how to create a timer.
@@ -278,6 +324,17 @@ static void on_yys_evt(ble_yy_service_t     * p_yy_service,
 */
 
 
+static void key_ring_trigger(void)
+{
+  //start timer
+  //turn on motor
+  //flash led
+  //beep buzzer
+  nrf_gpio_pin_toggle(LED_4);
+  //end timer
+  //turn off motor
+}
+
 /**@brief Function for handling the Custom Service Service events.
  *
  * @details This function will be called for all Custom Service events which are passed to
@@ -290,18 +347,48 @@ static void on_yys_evt(ble_yy_service_t     * p_yy_service,
 static void on_cus_evt(ble_cus_t     * p_cus_service,
                        ble_cus_evt_t * p_evt)
 {
+
+    ret_code_t         err_code;
     switch(p_evt->evt_type)
     {
-        case BLE_CUS_EVT_CONNECTED:
+        case BLE_CUS_EVT_APP_BUTTON:
+            key_ring_trigger();              
+            break;
+
+        case BLE_CUS_EVT_CONNECTED :
             break;
 
         case BLE_CUS_EVT_DISCONNECTED:
-              break;
+            break;
 
         default:
               // No implementation needed.
               break;
     }
+}
+
+static void bas_init()
+{
+  ret_code_t err_code;
+  ble_bas_init_t  bas_init;
+
+
+  // Initialize Battery Service.
+  memset(&bas_init, 0, sizeof(bas_init));
+
+  bas_init.evt_handler          = NULL;
+  bas_init.support_notification = true;
+  bas_init.p_report_ref         = NULL;
+  bas_init.initial_batt_level   = 100;
+
+  // Here the sec level for the Battery Service can be changed/increased.
+  bas_init.bl_rd_sec        = SEC_OPEN;
+  bas_init.bl_cccd_wr_sec   = SEC_OPEN;
+  bas_init.bl_report_rd_sec = SEC_OPEN;
+
+  err_code = ble_bas_init(&m_bas, &bas_init);
+  APP_ERROR_CHECK(err_code);
+  
 }
 
 
@@ -318,11 +405,13 @@ static void services_init(void)
     err_code = nrf_ble_qwr_init(&m_qwr, &qwr_init);
     APP_ERROR_CHECK(err_code);
 
+    bas_init();
+
     // Create a ble_cus_init_t struct, and initialize CUS Service init structure to zero.
     ble_cus_init_t  cus_init;
     memset(&cus_init, 0, sizeof(cus_init));
 
-    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cus_init.custom_value_char_attr_md.read_perm);
+    //BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cus_init.custom_value_char_attr_md.read_perm);
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cus_init.custom_value_char_attr_md.write_perm);
 
     // Set the cus event handler
@@ -397,6 +486,12 @@ static void application_timers_start(void)
        err_code = app_timer_start(m_app_timer_id, TIMER_INTERVAL, NULL);
        APP_ERROR_CHECK(err_code); */
 
+
+    ret_code_t err_code;
+
+    // Start application timers.
+    err_code = app_timer_start(m_battery_timer_id, BATTERY_LEVEL_MEAS_INTERVAL, NULL);
+    APP_ERROR_CHECK(err_code);
 }
 
 

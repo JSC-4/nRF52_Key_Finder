@@ -16,6 +16,7 @@
   <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140;Application"/>
   <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140;Application;components"/>
   <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140;Application;components;ble_custom_service"/>
+  <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140;Application;components;ble_service"/>
   <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140;Application;config"/>
   <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140;Application;main"/>
   <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140;Board Definition"/>
@@ -44,11 +45,11 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="13" y="321" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../main/main.c" selected="0" top="298" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="4" y="71" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../components/ble_custom_service/ble_cus.c" selected="1" top="52" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="2" y="93" useTextEdit="1" openedFrom="D:/Embedded/nRF/nRF52_Key_Finder/application/main/main.c" useBinaryEdit="0" left="0" path="../../../components/ble_custom_service/include/ble_cus.h" selected="0" top="71" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="35" y="635" useTextEdit="1" openedFrom="D:/Embedded/nRF/nRF52_Key_Finder/application/components/ble_custom_service/ble_cus.c" useBinaryEdit="0" left="0" path="../../../../../nRF5_SDK_17.0.2_d674dde/components/softdevice/s140/headers/ble_gatts.h" selected="0" top="562" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="10" y="208" useTextEdit="1" openedFrom="D:/Embedded/nRF/nRF52_Key_Finder/application/components/ble_custom_service/ble_cus.c" useBinaryEdit="0" left="0" path="../../../../../nRF5_SDK_17.0.2_d674dde/components/softdevice/s140/headers/ble_gatt.h" selected="0" top="186" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="30" y="508" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../main/main.c" selected="1" top="479" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="172" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../components/ble_custom_service/ble_cus.c" selected="0" top="18" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="37" y="84" useTextEdit="1" openedFrom="D:/Embedded/nRF/nRF52_Key_Finder/application/components/ble_custom_service/ble_cus.c" useBinaryEdit="0" left="0" path="../../../components/ble_custom_service/include/ble_cus.h" selected="0" top="51" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="289" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="260" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="45" y="46" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../config/app_config.h" selected="0" top="12" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="ble_app_key_finder_pca10056_s140" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="J-Link" buildConfiguration="Release" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/Embedded/nRF/nRF52_Key_Finder/application/components/ble_custom_service" debugSearchPath="" autoConnectCapabilities="3711"/>
+ <ARMCrossStudioWindow activeProject="ble_app_key_finder_pca10056_s140" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="J-Link" buildConfiguration="Release" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/Embedded/nRF/nRF52_Key_Finder/application/components/ble_service" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>

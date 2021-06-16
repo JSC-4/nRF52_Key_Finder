@@ -49,5 +49,10 @@
 #define NRF_SDH_BLE_VS_UUID_COUNT 1
 #endif
 
+// <e> BLE_BAS_ENABLED - ble_bas - Battery Service
+//==========================================================
+#ifndef BLE_BAS_ENABLED
+#define BLE_BAS_ENABLED 1
+#endif
 
 #endif // APP_CONFIG_H

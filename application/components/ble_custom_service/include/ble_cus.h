@@ -69,6 +69,7 @@ NRF_SDH_BLE_OBSERVER(_name ## _obs,                                             
 
 typedef enum
 {
+    BLE_CUS_EVT_APP_BUTTON,                             /**< Custom value notification enabled event. */
     BLE_CUS_EVT_DISCONNECTED,
     BLE_CUS_EVT_CONNECTED
 } ble_cus_evt_type_t;
@@ -127,19 +128,3 @@ uint32_t ble_cus_init(ble_cus_t * p_cus, const ble_cus_init_t * p_cus_init);
  * @param[in]   p_context  Custom Service structure.
  */
 void ble_cus_on_ble_evt( ble_evt_t const * p_ble_evt, void * p_context);
-
-
-/**@brief Function for updating the custom value.
- *
- * @details The application calls this function when the cutom value should be updated. If
- *          notification has been enabled, the custom value characteristic is sent to the client.
- *
- * @note 
- *       
- * @param[in]   p_cus          Custom Service structure.
- * @param[in]   Custom value 
- *
- * @return      NRF_SUCCESS on success, otherwise an error code.
- */
-
-uint32_t ble_cus_custom_value_update(ble_cus_t * p_cus, uint8_t custom_value);
