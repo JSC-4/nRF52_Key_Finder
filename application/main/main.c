@@ -81,10 +81,13 @@
 #include "ble_cus.h"
 #include "ble_bas.h"
 
+#include "nrf_drv_saadc.h"
+
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
 
+#define SAADC_LOG_ENABLED               true
 
 #define DEVICE_NAME                     "Key_Finder"                       /**< Name of device. Will be included in the advertising data. */
 #define MANUFACTURER_NAME               "NordicSemiconductor"                   /**< Manufacturer. Will be passed to Device Information Service. */
@@ -114,7 +117,28 @@
 
 #define DEAD_BEEF                       0xDEADBEEF                              /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
+// Converting the saadc result to a voltage value (mv)
+// RESULT = [V(P) – V(N)] * GAIN/REFERENCE * 2(RESOLUTION - m)
+// if CONFIG.MODE=SE (m=0)| if CONFIG.MODE=Diff (m=1).
+// Source : https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf52840%2Fsaadc.html&cp=4_0_0_5_22_2&anchor=saadc_digital_output
+
+// RESOLUTION : 12 bit;
+// Defaults for SE (single ended mode)
+// V(N) = 0;
+// GAIN = 1/6;
+// REFERENCE Voltage = internal (0.6V);
+// m = 0;
+
+// V(P) = ADC_RESULT x REFERENCE / ( GAIN x RESOLUTION) 
+//      = ADC_RESULT x (600 / (1/6 x 2^(12)) 
+//      = ADC_RESULT x 0.87890625;
+#define ADC_RESULT_IN_MILLI_VOLTS(ADC_RESULT) (ADC_RESULT * 0.87890625)        /**< Function used to convert the saadc resault to a voltage value. */
+
 #define BATTERY_LEVEL_MEAS_INTERVAL         APP_TIMER_TICKS(2000)
+#define SAADC_TIMER_INTERVAL                APP_TIMER_TICKS(200)                    /**< Saadc sampling timer interval (200 ms). */
+#define SAMPLES_IN_BUFFER                   1
+
+static nrf_saadc_value_t m_buffer_pool[2][SAMPLES_IN_BUFFER];     // Save the samples in double buffer which is  a two dimentional array
 
 BLE_BAS_DEF(m_bas);                                                 /**< Structure used to identify the battery service. */
 BLE_CUS_DEF(m_cus);
@@ -126,7 +150,7 @@ APP_TIMER_DEF(m_battery_timer_id);                                  /**< Battery
 
 static uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID;                        /**< Handle of the current connection. */
 static volatile uint8_t battery_level = 0;                                      /**< Battery level. */
-
+static uint32_t              m_adc_evt_counter;                                 /**< Used to count the saadc events. */
 /* YOUR_JOB: Declare all services structure your application is using
  *  BLE_XYZ_DEF(m_xyz);
  */
@@ -179,6 +203,21 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
 }
 
 
+/**@brief Function for handling the Saadc timer timeout.
+ *
+ * @details This function will be called each time the Saadc timer expires.
+ * @note The saadc won't start the converstion untill its buffer is full.
+ *       That means  : untill we have SAMPLES_IN_BUFFER samples.
+ *       Which means : untill SAMPLES_IN_BUFFER samples are made.
+ */
+/*static void saadc_timer_timeout_handler(void * p_context)
+{
+    UNUSED_PARAMETER(p_context);
+    ret_code_t err_code = nrf_drv_saadc_sample();
+    APP_ERROR_CHECK(err_code);
+}*/
+
+
 /**@brief Function for performing battery measurement and updating the Battery Level characteristic
  *        in Battery Service.
  */
@@ -209,6 +248,10 @@ static void battery_level_update(void)
 static void battery_level_meas_timeout_handler(void * p_context)
 {
     UNUSED_PARAMETER(p_context);
+
+    ret_code_t err_code = nrf_drv_saadc_sample();
+    APP_ERROR_CHECK(err_code);
+
     battery_level_update();
 }
 
@@ -816,6 +859,60 @@ static void advertising_start(bool erase_bonds)
 }
 
 
+// the saadc callback function
+void saadc_callback(nrf_drv_saadc_evt_t const * p_event)
+{ 
+   ret_code_t err_code;
+
+    if (p_event->type == NRF_DRV_SAADC_EVT_DONE)
+    {     
+        uint16_t saadc_voltages[1] = {0};
+
+        err_code = nrf_drv_saadc_buffer_convert(p_event->data.done.p_buffer, SAMPLES_IN_BUFFER);
+        APP_ERROR_CHECK(err_code);
+
+        for (uint8_t i = 0; i < SAMPLES_IN_BUFFER; i++)
+        {
+            saadc_voltages[i] = ADC_RESULT_IN_MILLI_VOLTS(p_event->data.done.p_buffer[i]);
+        }
+
+        battery_level = battery_level_in_percent(saadc_voltages[0]);
+
+#if SAADC_LOG_ENABLED
+        NRF_LOG_INFO("---- saadc event number : %d ----", m_adc_evt_counter);
+
+        NRF_LOG_INFO("battery measured voltage  : %d mV.", saadc_voltages[0]);
+        NRF_LOG_INFO("battery level  : %d.", battery_level);
+#endif
+
+      //  m_adc_evt_counter++;
+    }
+}
+
+
+// intialising the saadc
+void saadc_init(void)
+{
+    ret_code_t err_code;
+    // channel0 input set to vdd
+    nrf_saadc_channel_config_t channel0_config =
+        NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_VDD);
+ 
+    err_code = nrf_drv_saadc_init(NULL, saadc_callback);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrf_drv_saadc_channel_init(0, &channel0_config);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrf_drv_saadc_buffer_convert(m_buffer_pool[0], SAMPLES_IN_BUFFER);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrf_drv_saadc_buffer_convert(m_buffer_pool[1], SAMPLES_IN_BUFFER);
+    APP_ERROR_CHECK(err_code);
+
+}
+
+
 /**@brief Function for application main entry.
  */
 int main(void)
@@ -834,6 +931,8 @@ int main(void)
     advertising_init();
     conn_params_init();
     peer_manager_init();
+
+    saadc_init();
 
     // Start execution.
     NRF_LOG_INFO("Template example started.");
