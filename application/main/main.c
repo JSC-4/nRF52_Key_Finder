@@ -80,6 +80,7 @@
 
 #include "ble_cus.h"
 #include "ble_bas.h"
+#include "keyring.h"
 
 #include "nrf_drv_saadc.h"
 
@@ -369,13 +370,9 @@ static void on_yys_evt(ble_yy_service_t     * p_yy_service,
 
 static void key_ring_trigger(void)
 {
-  //start timer
-  //turn on motor
-  //flash led
-  //beep buzzer
+
   nrf_gpio_pin_toggle(LED_4);
-  //end timer
-  //turn off motor
+
 }
 
 /**@brief Function for handling the Custom Service Service events.
@@ -395,7 +392,8 @@ static void on_cus_evt(ble_cus_t     * p_cus_service,
     switch(p_evt->evt_type)
     {
         case BLE_CUS_EVT_APP_BUTTON:
-            key_ring_trigger();              
+            //key_ring_trigger();              
+            trigger_pwm();
             break;
 
         case BLE_CUS_EVT_CONNECTED :
@@ -933,6 +931,7 @@ int main(void)
     peer_manager_init();
 
     saadc_init();
+    keyring_init();
 
     // Start execution.
     NRF_LOG_INFO("Template example started.");
