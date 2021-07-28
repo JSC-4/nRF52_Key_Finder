@@ -15,6 +15,8 @@
   <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140"/>
   <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140;Application"/>
   <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140;Application;components"/>
+  <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140;Application;components;ble_custom_service"/>
+  <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140;Application;components;ble_service"/>
   <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140;Application;config"/>
   <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140;Application;main"/>
   <ProjectSessionItem path="ble_app_key_finder_pca10056_s140;ble_app_key_finder_pca10056_s140;Board Definition"/>
@@ -45,13 +47,15 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="65" y="377" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../main/main.c" selected="1" top="366" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="368" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../main/main.c" selected="0" top="366" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="27" y="2766" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="2732" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="62" y="102" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../config/app_config.h" selected="0" top="76" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="25" y="44" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../../nRF5_SDK_17.0.2_d674dde/modules/nrfx/drivers/src/nrfx_pwm.c" selected="0" top="2" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="23" y="437" useTextEdit="1" openedFrom="D:/Embedded/nRF/nRF52_Key_Finder/nRF5_SDK_17.0.2_d674dde/modules/nrfx/drivers/src/nrfx_pwm.c" useBinaryEdit="0" left="0" path="../../../../../nRF5_SDK_17.0.2_d674dde/integration/nrfx/legacy/apply_old_config.h" selected="0" top="409" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="34" y="68" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../../../nRF5_SDK_17.0.2_d674dde/modules/nrfx/drivers/include/nrfx_pwm.h" selected="0" top="23" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="16" y="46" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../components/keyring.c" selected="0" top="30" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="15" y="42" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../components/ble_custom_service/ble_cus.c" selected="0" top="33" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="C:/Users/jsc/Documents/Embedded/nRF/nRF52_Key_Finder/application/components/ble_custom_service/ble_cus.c" useBinaryEdit="0" left="0" path="../../../components/ble_custom_service/include/ble_cus.h" selected="1" top="24" codecName="Default"/>
  </Files>
  <ARMCrossStudioWindow activeProject="ble_app_key_finder_pca10056_s140" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="J-Link" buildConfiguration="Release" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/Embedded/nRF/nRF52_Key_Finder/application/components" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>
