@@ -152,9 +152,6 @@ APP_TIMER_DEF(m_battery_timer_id);                                  /**< Battery
 static uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID;                        /**< Handle of the current connection. */
 static volatile uint8_t battery_level = 0;                                      /**< Battery level. */
 static uint32_t              m_adc_evt_counter;                                 /**< Used to count the saadc events. */
-/* YOUR_JOB: Declare all services structure your application is using
- *  BLE_XYZ_DEF(m_xyz);
- */
 
 // YOUR_JOB: Use UUIDs for service(s) used in your application.
 static ble_uuid_t m_adv_uuids[] =                                               /**< Universally unique service identifiers. */
@@ -274,14 +271,6 @@ static void timers_init(void)
                                 battery_level_meas_timeout_handler);
     APP_ERROR_CHECK(err_code);
 
-
-    /* YOUR_JOB: Create any timers to be used by the application.
-                 Below is an example of how to create a timer.
-                 For every new timer needed, increase the value of the macro APP_TIMER_MAX_TIMERS by
-                 one.
-       ret_code_t err_code;
-       err_code = app_timer_create(&m_app_timer_id, APP_TIMER_MODE_REPEATED, timer_timeout_handler);
-       APP_ERROR_CHECK(err_code); */
 }
 
 
@@ -302,10 +291,6 @@ static void gap_params_init(void)
                                           (const uint8_t *)DEVICE_NAME,
                                           strlen(DEVICE_NAME));
     APP_ERROR_CHECK(err_code);
-
-    /* YOUR_JOB: Use an appearance value matching the application's use case.
-       err_code = sd_ble_gap_appearance_set(BLE_APPEARANCE_);
-       APP_ERROR_CHECK(err_code); */
 
     memset(&gap_conn_params, 0, sizeof(gap_conn_params));
 
@@ -340,34 +325,6 @@ static void nrf_qwr_error_handler(uint32_t nrf_error)
     APP_ERROR_HANDLER(nrf_error);
 }
 
-
-/**@brief Function for handling the YYY Service events.
- * YOUR_JOB implement a service handler function depending on the event the service you are using can generate
- *
- * @details This function will be called for all YY Service events which are passed to
- *          the application.
- *
- * @param[in]   p_yy_service   YY Service structure.
- * @param[in]   p_evt          Event received from the YY Service.
- *
- *
-static void on_yys_evt(ble_yy_service_t     * p_yy_service,
-                       ble_yy_service_evt_t * p_evt)
-{
-    switch (p_evt->evt_type)
-    {
-        case BLE_YY_NAME_EVT_WRITE:
-            APPL_LOG("[APPL]: charact written with value %s. ", p_evt->params.char_xx.value.p_str);
-            break;
-
-        default:
-            // No implementation needed.
-            break;
-    }
-}
-*/
-
-
 static void key_ring_trigger(void)
 {
 
@@ -391,8 +348,7 @@ static void on_cus_evt(ble_cus_t     * p_cus_service,
     ret_code_t         err_code;
     switch(p_evt->evt_type)
     {
-        case BLE_CUS_EVT_APP_BUTTON:
-            //key_ring_trigger();              
+        case BLE_CUS_EVT_APP_BUTTON:              
             trigger_pwm();
             break;
 
@@ -522,12 +478,6 @@ static void conn_params_init(void)
  */
 static void application_timers_start(void)
 {
-    /* YOUR_JOB: Start your timers. below is an example of how to start a timer.
-       ret_code_t err_code;
-       err_code = app_timer_start(m_app_timer_id, TIMER_INTERVAL, NULL);
-       APP_ERROR_CHECK(err_code); */
-
-
     ret_code_t err_code;
 
     // Start application timers.
