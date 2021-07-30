@@ -2,7 +2,9 @@
 #include "keyring.h"
 #include "nrf_drv_pwm.h"
 #include "bsp.h"
+#include "nrf_gpio.h"
 #include "app_error.h"
+
 
 // Create an instance of pwm0 and pwm1
 static nrfx_pwm_t m_pwm0 = NRFX_PWM_INSTANCE(0);

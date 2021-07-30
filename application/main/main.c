@@ -37,19 +37,6 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-/** @file
- *
- * @defgroup ble_sdk_app_template_main main.c
- * @{
- * @ingroup ble_sdk_app_template
- * @brief Template project main file.
- *
- * This file contains a template for creating a new application. It has the code necessary to wakeup
- * from button, advertise, get a connection restart advertising on disconnect and if no new
- * connection created go back to system-off mode.
- * It can easily be used as a starting point for creating a new application, the comments identified
- * with 'YOUR_JOB' indicates where and how you can customize.
- */
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -325,13 +312,6 @@ static void nrf_qwr_error_handler(uint32_t nrf_error)
     APP_ERROR_HANDLER(nrf_error);
 }
 
-static void key_ring_trigger(void)
-{
-
-  nrf_gpio_pin_toggle(LED_4);
-
-}
-
 /**@brief Function for handling the Custom Service Service events.
  *
  * @details This function will be called for all Custom Service events which are passed to
@@ -348,7 +328,7 @@ static void on_cus_evt(ble_cus_t     * p_cus_service,
     ret_code_t         err_code;
     switch(p_evt->evt_type)
     {
-        case BLE_CUS_EVT_APP_BUTTON:              
+        case BLE_CUS_EVT_APP_BUTTON:   
             trigger_pwm();
             break;
 
@@ -884,7 +864,6 @@ int main(void)
     keyring_init();
 
     // Start execution.
-    NRF_LOG_INFO("Template example started.");
     application_timers_start();
 
     advertising_start(erase_bonds);
